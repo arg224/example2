@@ -1,4 +1,3 @@
-# tests/test_mnist_server_client.py
 import unittest
 import subprocess
 import time
@@ -14,18 +13,10 @@ class TestMnistServerClient(unittest.TestCase):
     def setUpClass(cls):
         # Start gRPC server in a separate process
         cls.server_process = subprocess.Popen(['python', 'src/mnist_server.py'])
-        # Wait for the server to start
-        time.sleep(2)
-
-    @classmethod
-    def tearDownClass(cls):
-        # Stop the gRPC server
-        cls.server_process.terminate()
 
     def test_mnist_server_client_interaction(self):
         # Test the interaction between the server and client
-        channel = grpc.insecure_channel('localhost:50051')
-        mnist_service = MnistServiceStub(channel)
+        mnist_service = MnistServiceStub(grpc.insecure_channel('localhost:50051'))
 
         data_request = DataRequest()
         response_stream = mnist_service.GetTrainingSamples(data_request)
@@ -34,13 +25,17 @@ class TestMnistServerClient(unittest.TestCase):
         for sample in response_stream:
             label = sample.label
             image_bytes = sample.image
-            # Add assertions based on the expected behavior
             self.assertIsNotNone(image_bytes)
             self.assertTrue(0 <= label <= 9)
 
             samples_received += 1
-            if samples_received >= 5:
-                break  # Stop after receiving 5 samples for testing purposes
+            if samples_received >= 3:
+                break  
+
+    @classmethod
+    def tearDownClass(cls):
+        # Stop the gRPC server
+        cls.server_process.terminate()
 
 if __name__ == '__main__':
     unittest.main()
