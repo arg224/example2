@@ -1,3 +1,33 @@
+The repository creates a gRPC server that streams MNIST samples. The code is written in Python using gRPC and loadws the mnist examples to be streamed to clients. Each response from the server includes an image along with its label. This was my first exposure to gRPC services. It was interesting to learn how they operated, read up on the docs and build one myself.
+
+Runnning the Project: 
+Clone repository from: https://github.com/arg224/example2 
+
+Before running the server ensure that you have python 3.X installed and pip version higher than 9.X installed. 
+
+Other dependancies needed are : 
+gRPC- python -m pip install grpcio
+gRPC tools- python -m pip install grpcio-tools
+Pillow Library to define and work with the image portion of the response- pip install Pillow
+tensorflow to load the mnist dataset - pip install tensorflow
+
+If you make a change to the proto file be sure to run the following two steps in the directory: 
+pip install grpcio-tools
+python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. mnist.proto
+
+The client and server should be run in separate terminal windows. Open two terminals and run the server by navigating to the directory with the server code and running python mnist_server.py and the server will be accessed on localhost:50051 
+
+Repeat in second terminal with client by running python mnist_client.py
+The client will connect to the server, receive training samples, and display/save the images.
+
+
+Some changes and improvements I would make: 
+For clean coding purposes I would create separate folder sections for client, server and proto. In this case I was getting path errors that I didn't have time to resolve and I chose to instead forcus on the essence of the project as opoosed to syntactical issues but in the future that would be something I'd fix to make navigation easier. 
+
+Testing: 
+I gave two exmaples of different test methodologies
+- Integration Test:
+Integration tests are used to verify how two different components interract. In this case, the test checks the interraction of the client and server. The test simulates the real usage where the client interacts with the server to recieve samples. 
 
 - Unit Test 
 Unit tests focus on an individual or specific section. As there are no external dependances on this function, in this example the unit tests verifies data loader function in isolation. 
